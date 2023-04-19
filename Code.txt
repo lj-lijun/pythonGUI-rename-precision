@@ -2,6 +2,7 @@
 # 李军：chang'an university 
 # 邮箱：2352481248@qq.com
 
+
 import datetime
 import os
 import sys
@@ -10,18 +11,22 @@ from tkinter import ttk
 import tkinter.messagebox as tk_box
 from tkinter import filedialog
 import shutil
-from PIL import ImageTk, Image
 import webbrowser
 from tkinter import scrolledtext
+import ttkbootstrap
+
 
 class mainpage:
     def __init__(self, root):
         self.master=root
-        self.master.title ( 'Rename' )
+        self.master.title ( 'Rename v1.0.0' )
         screen_width=self.master.winfo_screenwidth ()
         screen_height=self.master.winfo_screenheight ()
-        width=720
-        height=400
+        width=900
+        height=450
+        self.master.maxsize(900, 450)
+        self.master.minsize(900, 450)
+
         window_size=f'{width}x{height}+{round ( (screen_width - width) / 2 )}+{round ( (screen_height - height) / 2 )}'  # round去掉小数
         self.master.geometry ( window_size )
 
@@ -30,7 +35,6 @@ class mainpage:
         self.gpsweek = tk.StringVar()
         self.path = tk.StringVar()
         self.save_path = tk.StringVar()
-
 
         self.prefix = tk.StringVar()
         self.buffix = tk.StringVar()
@@ -48,7 +52,7 @@ class mainpage:
         self.create_menu()
 
     def creat_page(self):
-        tk.Label ( self.master, text='GPSweek', bg='grey', font=('楷体', 10) ).grid ( row=0, column=2, padx=5, pady=10)
+        tk.Label ( self.master, text='-------GPSweek-------', font=("TkDefaultFont", 10) ).grid ( row=0, column=2, padx=5)
         ttk.Label ( self.master, text='year:' ).grid ( row=1, column=1, pady=3, padx=10 )
         tk.Entry ( self.master, textvariable=self.year ).grid ( row=1, column=2, pady=3, padx=5 )
 
@@ -59,21 +63,21 @@ class mainpage:
         tk.Label ( self.master, text='gpsweek:' ).grid ( row=5, column=1, pady=5 )
         tk.Entry ( self.master, textvariable=self.gpsweek ).grid ( row=5, column=2, pady=3 )
 
-        tk.Label(self.master, text='RenameSetting', bg='grey', font=('楷体', 10)).grid(row=6, column=2, padx=5, pady=2, )
+        tk.Label(self.master, text='----Rename Setting----', bg='grey', font=("TkDefaultFont", 10)).grid(row=6, column=2, padx=5, pady=5, )
 
-        tk.Label(self.master, text='prefix:').grid(row=7, column=1, pady=3)
-        tk.Entry(self.master, textvariable=self.prefix).grid(row=7, column=2, pady=3)
+        tk.Label(self.master, text='prefix:').grid(row=7, column=1, pady=5)
+        tk.Entry(self.master, textvariable=self.prefix).grid(row=7, column=2, pady=5)
 
         tk.Label(self.master, text='buffix:').grid(row=8, column=1, pady=5)
-        tk.Entry(self.master, textvariable=self.buffix).grid(row=8, column=2, pady=3)
+        tk.Entry(self.master, textvariable=self.buffix).grid(row=8, column=2, pady=5)
 
         tk.Label(self.master, text='start:').grid(row=9, column=1, pady=5)
-        tk.Entry(self.master, textvariable=self.start).grid(row=9, column=2, pady=3)
+        tk.Entry(self.master, textvariable=self.start).grid(row=9, column=2, pady=5)
 
         tk.Label(self.master, text='end:').grid(row=10, column=1, pady=5)
-        tk.Entry(self.master, textvariable=self.end).grid(row=10, column=2, pady=3)
+        tk.Entry(self.master, textvariable=self.end).grid(row=10, column=2, pady=5)
 
-        tk.Label(self.master, text='Type:').grid(row=11, column=1)
+        tk.Label(self.master, text='Type:').grid(row=11, column=1, pady=5)
         self.combo = ttk.Combobox(self.master)
         self.combo['values'] = ('Precision','Broadcast/Other')
         self.combo.current(0)
@@ -81,27 +85,25 @@ class mainpage:
 
 
         # 布局Treeview表格
-        tk.Label ( self.master, text='精密星历重命名', bg='grey', font=('楷体', 10) ).grid ( row=0,columnspan=9,  padx=3, pady=10)
+        #tk.Label ( self.master, text='精密星历重命名', bg='grey', font=('楷体', 10) ).grid ( row=0,columnspan=9,  padx=3, pady=10)
         columns=('0', '1')
-        self.tree_view=ttk.Treeview ( self.master, show="headings", columns=columns, height=13 )
+        self.tree_view=ttk.Treeview ( self.master, show="headings", columns=columns, height=15 )
         self.tree_view.grid ( row=1, column=5, columnspan=5, rowspan=10 )
         self.VScroll=ttk.Scrollbar ( self.master, orient='vertical', command=self.tree_view.yview )  # 创建滚动条
         self.tree_view.configure ( yscrollcommand=self.VScroll.set )  # 滚动条与表格控件关联
         self.VScroll.grid ( row=1, column=10, rowspan=10, sticky='ns' )  # 滚动条放置位置
         tk.Label ( self.master, text=' ' ).grid ( row=1, column=4 )
 
-        self.tree_view.column ( '0', width=300, anchor='center' )
-        self.tree_view.column ( '1', width=160, anchor='center' )
+        self.tree_view.column ( '0', width=360, anchor='center' )
+        self.tree_view.column ( '1', width=200, anchor='center' )
 
-        self.tree_view.heading ( '0', text='oldname' )
-        self.tree_view.heading ( '1', text='newname' )
-
+        self.tree_view.heading ( '0', text='Old_name' )
+        self.tree_view.heading ( '1', text='New_name' )
 
         ttk.Button ( self.master, text='Open_file', command=self.open_file ).grid ( row=11, column=5, pady=2 )
-        ttk.Button ( self.master, text='Preview', command=self.preview ).grid ( row=11, column=6, pady=2 )
+        ttk.Button ( self.master, text=' Preview ', command=self.preview ).grid ( row=11, column=6, pady=2 )
         ttk.Button(self.master, text='Save_path', command=self.save_data).grid(row=11, column=7, pady=2)
-        ttk.Button ( self.master, text='Rename', command=self.translate ).grid ( row=11, column=8, pady=2 )
-
+        ttk.Button ( self.master, text=' Rename ', command=self.translate ).grid ( row=11, column=8, pady=2 )
 
         ttk.Label(self.master, text='Workpath:').grid(row=12, column=5, pady=5)
         tk.Entry(self.master, textvariable=self.path).grid(row=12, column=6, pady=3)
@@ -112,13 +114,13 @@ class mainpage:
     def create_menu(self):
         menubar = tk.Menu(self.master)
         self.help_tool=tk.Menu ( menubar, tearoff=False )
-        menubar.add_cascade(label='help', menu=self.help_tool)
+        menubar.add_cascade(label='Help', menu=self.help_tool,font=("TkDefaultFont",10))
 
         self.help_tool.add_command(label='handbook', command=self.handbook)
         self.help_tool.add_command(label='about', command=self.about)
         self.help_tool.add_command(label='IGS_center', command=self.URL)
         self.master['menu'] = menubar  # 将菜单绑定到页面
-
+#
     def open_file(self):
         folderpath = filedialog.askdirectory()  # 获得选择好的文件夹
         self.path.set ( folderpath )
@@ -154,7 +156,7 @@ class mainpage:
                     newname2 = prefix + str(file[start - 1:end]) + buffix
                     self.tree_view.insert('', 'end', values=[file, newname2])
             except:
-                key = tk_box.showwarning(title='错误',message='There may be a field interception error of start or end!Click OK to exit the process')
+                key = tk_box.showwarning(title='Error',message='There may be a field interception error of start or end!Click OK to exit the process')
                 print(key)
                 if key == 'ok':
                     sys.exit(0)
@@ -176,8 +178,6 @@ class mainpage:
 
             yr = file[start - 1:start + 3]
             dy = file[start + 3:end]
-            #time = doy2datetime(int(yr), int(dy))
-            #gpsweek = datetime2GnssTime(time)
             out_path = self.save_path.get()
             oldname_path = os.path.join(path_1,file)
             print(oldname_path)
@@ -213,13 +213,13 @@ class mainpage:
     def handbook(self):
         win = tk.Toplevel()
         win.geometry('300x400')
-        win.maxsize(300, 400)
-        win.minsize(300, 400)
+        win.maxsize(340, 400)
+        win.minsize(340, 400)
         win.title('Software Manual')
-        win.attributes('-alpha', 0.90)
-        tk.Label(win, text='Manual', font=("宋体", 10), fg='red').pack()
+        win.attributes('-alpha', 0.95)
+        ttk.Label(win, text='Manual', font=("等线", 12)).pack()
         scr = scrolledtext.ScrolledText(win, width=100, height=400,
-                                        font=("Arial", 10))  # 滚动文本框（宽，高（这里的高应该是以行数为单位），字体样式）
+                                        font=("TkDefaultFont", 10))  # 滚动文本框（宽，高（这里的高应该是以行数为单位），字体样式）
         scr.pack()  # 滚动文本框在页面的位置
         with open('handbook.txt', mode='r', encoding='utf-8') as rfile:
             for line in rfile:
@@ -235,25 +235,20 @@ class mainpage:
         win.maxsize(400, 200)
         win.minsize(400, 200)
         win.title('Software information')
-        win.attributes('-alpha', 0.90)
-        # win.image_file = Image.open("弹窗.jfif")
-        # win.photo = ImageTk.PhotoImage(win.image_file)
-        # image = tk.Label(win, image=win.photo)
-        # image.grid(row=0, column=0, columnspan=20)
-        tk.Label(win, text='Ver： v1.0.0.0', font=("宋体", 10), fg='red').grid(row=1, column=0, sticky='w')
+        win.attributes('-alpha', 0.95)
+        tk.Label(win, text='Ver： v1.0.0', font=("宋体", 10), fg='red').grid(row=1, column=0, sticky='w')
         tk.Label(win, text='Tool： Python tkinter libraries', font=("宋体", 10), fg='blue').grid(row=2, column=0, pady=4,
                                                                                      sticky='w')
         tk.Label(win, text='Time： 2023/4/19', font=("宋体", 10), fg='blue').grid(row=3, column=0, pady=4,
                                                                                     sticky='w')
         tk.Label(win, text='Author：', font=("宋体", 10), fg='blue').grid(row=4, column=0, pady=4, sticky='w')
-        tk.Label(win, text='Name：lijun-Chang an University', font=("宋体", 10), fg='blue').grid(row=5, column=0, pady=3, sticky='w')
+        tk.Label(win, text='Name：李 军', font=("宋体", 10), fg='blue').grid(row=5, column=0, pady=3, sticky='w')
         tk.Label(win, text='Email：2452481258@qq.com', font=("宋体", 10), fg='blue').grid(row=6, column=0, pady=4, sticky='w')
-        link = tk.Label(win, text='Code:  https://github.com/lj-lijun/pythonGUI-rename-precision.git', font=('Arial', 10), fg='red')
+        link = tk.Label(win, text='Code:  https://github.com/lj-lijun/pythonGUI-rename-precision.git', font=('Arial', 10))
         link.grid(row=7, column=0, sticky='w')
 
         def open_url(event):
             webbrowser.open("https://github.com/lj-lijun/pythonGUI-rename-precision.git", new=0)
-
         link.bind("<Button-1>", open_url)
 
 def doy2datetime(year, doy):
@@ -284,6 +279,7 @@ def datetime2GnssTime(specTime):
 
 
 if __name__ == '__main__':
-    root=tk.Tk ()
+    root=ttkbootstrap.Window ()
     mainpage ( root )
     root.mainloop ()
+
