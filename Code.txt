@@ -292,7 +292,7 @@ class mainpage:
                                                                                     sticky='w')
         tk.Label(win, text='Author：', font=("Arial", 8), fg='blue').grid(row=4, column=0, pady=4, sticky='w')
         tk.Label(win, text='Name：李 军', font=("Arial", 8), fg='blue').grid(row=5, column=0, pady=3, sticky='w')
-        tk.Label(win, text='Email：2452481258@qq.com', font=("Arial", 8), fg='blue').grid(row=6, column=0, pady=4, sticky='w')
+        tk.Label(win, text='Email：2452481248@qq.com', font=("Arial", 8), fg='blue').grid(row=6, column=0, pady=4, sticky='w')
         link = tk.Label(win, text='Code:  https://github.com/lj-lijun/pythonGUI-rename-precision.git', font=('Arial', 8))
         link.grid(row=7, column=0, sticky='w')
 
